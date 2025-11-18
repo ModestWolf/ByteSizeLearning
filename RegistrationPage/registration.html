@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>ByteSize Learning – PAGE TITLE</title>
+    <link rel="stylesheet" href="../CSS/styles.css" />
+</head>
+
+<body>
+    <header class="site-header">
+	    <div class="logo-wrap">
+		    <a href="../HomePage/index.html" class="logo-link">
+		        <div class="logo-square">
+				    <img src="../Assets/Images/bsl-logo.png" alt="ByteSize Learning logo">
+		        </div>
+			    <span class="logo-text">ByteSize Learning</span>
+		    </a>
+	    </div>
+	    <nav class="main-nav">
+		    <a href="../HomePage/index.html">Home</a>
+		    <a href="../AboutAndCreditsPage/about.html">About</a>
+		    <a href="../TutorialsPage/tutorials.html">Tutorials</a>
+		    <a href="../RegistrationPage/registration.html">Register</a>
+		    <a href="../PortalPage/portal.html">Staff Portal</a>
+	    </nav>
+    </header>
+
+    <main class="registration">
+		<h1>Register for ByteSize Learning</h1>
+		<form id="registrationForm" novalidate>
+			<label>
+				Name
+				<input type="text" id="name" />
+				<span class="error" id="nameError"></span>
+			</label>
+
+			<label>
+				Email
+				<input type="email" id="email" />
+				<span class="error" id="emailError"></span>
+			</label>
+
+			<label>
+				Experience Level
+				<select id="level">
+					<option value="">Select one</option>
+					<option value="beginner">Beginner</option>
+					<option value="intermediate">Intermediate</option>
+					<option value="advanced">Advanced</option>
+				</select>
+				<span class="error" id="levelError"></span>
+			</label>
+
+			<label>
+				Interested In
+				<select id="interest">
+					<option value="">Select one</option>
+					<option value="java">Java</option>
+					<option value="web">Web Development</option>
+					<option value="both">Both</option>
+				</select>
+				<span class="error" id="interestError"></span>
+			</label>
+
+		<button type="submit" class="btn primary">Submit</button>
+		</form>
+    </main>
+
+
+
+    <footer>
+        <p>© 2025 ByteSize Learning</p>
+    </footer>
+
+    <script src="../JS/storage.js"></script>
+	<script src="../JS/main.js"></script>
+</body>
+</html>

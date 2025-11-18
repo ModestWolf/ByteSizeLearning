@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>ByteSize Learning – PAGE TITLE</title>
+    <link rel="stylesheet" href="../CSS/styles.css" />
+</head>
+
+<body>
+    <header class="site-header">
+	    <div class="logo-wrap">
+		    <a href="../HomePage/index.html" class="logo-link">
+		        <div class="logo-square">
+				    <img src="../Assets/Images/bsl-logo.png" alt="ByteSize Learning logo">
+		        </div>
+			    <span class="logo-text">ByteSize Learning</span>
+		    </a>
+	    </div>
+	    <nav class="main-nav">
+		    <a href="../HomePage/index.html">Home</a>
+		    <a href="../AboutAndCreditsPage/about.html">About</a>
+		    <a href="../TutorialsPage/tutorials.html">Tutorials</a>
+		    <a href="../RegistrationPage/registration.html">Register</a>
+		    <a href="../PortalPage/portal.html">Staff Portal</a>
+	    </nav>
+    </header>
+
+    <main class="portal">
+	    <h1>Staff Portal</h1>
+
+	    <section class="login" id="loginSection">
+		    <h2>Login</h2>
+		    <p>Use <strong>admin</strong> / <strong>password</strong> for demo purposes.</p>
+		    <form id="loginForm">
+			    <label>
+				    Username
+				    <input type="text" id="loginUser">
+			    </label>
+			    <label>
+				    Password
+				    <input type="password" id="loginPass">
+			    </label>
+			    <button type="submit" class="btn primary">Login</button>
+			    <span class="error" id="loginError"></span>
+		    </form>
+	    </section>
+
+	    <section class="portal-content hidden" id="portalContent">
+		    <section class="event-form">
+			    <h2>Create / Add Event</h2>
+			    <form id="eventForm">
+			    	<label>
+			    		Title
+			    		<input type="text" id="eventTitle">
+			    	</label>
+			    	<label>
+			    		Date
+			    		<input type="date" id="eventDate">
+			    	</label>
+			    	<label>
+			    		Time
+			    		<input type="time" id="eventTime">
+			    	</label>
+			    	<label>
+			    		Topic
+			    		<select id="eventTopic">
+			    			<option value="java">Java</option>
+			    			<option value="web">Web</option>
+			    		</select>
+			    	</label>
+			    	<button type="submit" class="btn primary">Add Event</button>
+			    	<span class="error" id="eventError"></span>
+			    </form>
+		    </section>
+
+		    <section class="event-list">
+		    	<h2>Upcoming Events</h2>
+		    	<ul id="eventsList">
+		    		<li>No events yet.</li>
+		    	</ul>
+		    </section>
+	    </section>
+    </main>
+
+    <footer>
+        <p>© 2025 ByteSize Learning</p>
+    </footer>
+
+    <script src="../JS/storage.js"></script>
+    <script src="../JS/main.js"></script>
+</body>
+</html>

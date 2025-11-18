@@ -1,0 +1,313 @@
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0;
+    background: #F8F9FB;
+    color: #2B2D42;
+}
+
+main {
+	max-width: 1100px;
+	margin: 0 auto;
+}
+
+.site-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between; /* logo left, nav right */
+	padding: 0.75rem 1.5rem;
+	background: #3A86FF;
+	color: #fff;
+}
+
+/* logo block */
+
+.logo-wrap {
+	display: flex;
+	align-items: center;
+}
+
+.logo-link {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: inherit;
+	gap: 0.5rem;
+}
+
+.logo-square {
+	height: 40px;
+	width: 40px;
+	overflow: hidden;
+	border-radius: 10px;
+	flex-shrink: 0;
+}
+
+.logo-square img {
+	height: 100%;
+	width: 100%;
+	object-fit: cover;
+}
+
+.logo-text {
+	font-weight: 700;
+	font-size: 1.25rem;
+}
+
+/* nav links */
+
+.main-nav {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+}
+
+.main-nav a {
+	color: #fff;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.main-nav a:hover {
+	text-decoration: underline;
+}
+
+.hero {
+	text-align: center;
+}
+
+.hero-logo {
+	height: 250px;
+	width: 250px;
+	margin: 0 auto 1rem auto;
+	overflow: hidden;
+	border-radius: 20px;
+}
+
+.hero-title {
+	font-size: 2.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+	font-size: 1.2rem;
+	margin-bottom: 1rem;
+	color: #444;
+}
+
+.hero-logo img {
+	height: 100%;
+	width: 100%;
+	object-fit: cover;
+}
+
+.portal {
+	padding: 1.5rem;
+}
+
+.portal h1 {
+	margin-bottom: 1rem;
+}
+
+.portal-content {
+	margin-top: 1.5rem;
+	display: grid;
+	grid-template-columns: 1.2fr 1.8fr;
+	gap: 2rem;
+}
+
+.portal label {
+	display: block;
+	margin-bottom: 0.75rem;
+}
+
+.portal input,
+.portal select {
+	width: 100%;
+	padding: 0.4rem;
+	margin-top: 0.2rem;
+	box-sizing: border-box;
+}
+
+.event-list ul {
+	list-style: none;
+	padding-left: 0;
+}
+
+.event-list li {
+	background: #ffffff;
+	border-radius: 6px;
+	padding: 0.75rem 1rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	margin-bottom: 0.5rem;
+}
+
+.tutorial-layout {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: 2rem;
+	margin-top: 1.5rem;
+}
+
+.filters label {
+	display: block;
+	margin-bottom: 1rem;
+}
+
+.lesson-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.lesson-card {
+	background: #ffffff;
+	border-radius: 8px;
+	padding: 0.75rem 1rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+	cursor: pointer;
+}
+
+.lesson-card:hover {
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.lesson-tags {
+	font-size: 0.85rem;
+	color: #555;
+}
+
+.lesson-detail h2 {
+	margin-top: 0;
+}
+
+.lesson-detail pre {
+	background: #1e1e1e;
+	color: #f5f5f5;
+	padding: 0.75rem;
+	border-radius: 6px;
+	overflow-x: auto;
+	font-size: 0.9rem;
+}
+
+.lesson-detail code {
+	font-family: Consolas, "Courier New", monospace;
+}
+
+.recent-lesson {
+	max-width: 600px;
+	margin: 2rem auto;
+	padding: 1.25rem 1.5rem;
+	background: #ffffff;
+	border-radius: 10px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	text-align: left;
+}
+
+.recent-lesson h2 {
+	margin-top: 0;
+	margin-bottom: 0.5rem;
+}
+
+.recent-lesson h3 {
+	margin-top: 0.25rem;
+	margin-bottom: 0.5rem;
+	font-size: 1.1rem;
+}
+
+.recent-lesson-tags {
+	font-size: 0.85rem;
+	color: #555;
+	margin-bottom: 0.75rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.btn.primary {
+    background: #3A86FF;
+    color: white;
+}
+
+.btn.secondary {
+    background: #B388EB;
+    color: white;
+}
+
+.error {
+    color: #d90429;
+    font-size: 0.8rem;
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+.feature-card,
+.lesson-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: white;
+}
+
+/* ====== Responsive tweaks for smaller screens ====== */
+@media (max-width: 768px) {
+	/* Keep content from hugging the edges too much */
+	main {
+		padding: 1rem;
+	}
+
+	/* Header: logo on top, nav below */
+	.site-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+
+	.main-nav {
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	/* Hero: keep it readable on phones */
+	.hero {
+		margin-top: 1rem;
+	}
+
+	.hero-title {
+		font-size: 2rem;
+	}
+
+	.hero-subtitle {
+		font-size: 1rem;
+	}
+
+	.hero-button-group {
+		flex-direction: column;
+	}
+
+	/* Tutorials layout: stack filters over content */
+	.tutorial-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.filters {
+		margin-bottom: 1rem;
+	}
+
+	/* Portal layout: stack form over event list */
+	.portal-content {
+		grid-template-columns: 1fr;
+	}
+
+	/* Recent lesson card: a bit tighter on small screens */
+	.recent-lesson {
+		margin: 1.5rem 0.5rem;
+	}
+}
