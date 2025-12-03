@@ -314,7 +314,7 @@ function initHomePage() {
 		widget.innerHTML = `
 			<h2>Recent Lesson</h2>
 			<p>You haven't viewed any lessons yet.</p>
-			<a href="../TutorialsPage/tutorials.html" class="btn primary">Start with Tutorials</a>
+			<a href="TutorialsPage/tutorials.html" class="btn primary">Start with Tutorials</a>
 		`;
 		return;
 	}
@@ -328,6 +328,6 @@ function initHomePage() {
 			<strong>Time:</strong> ${lesson.time}
 		</p>
 		<p class="recent-lesson-tags">${lesson.tags.join(", ")}</p>
-		<a href="../TutorialsPage/tutorials.html" class="btn secondary">Continue in Tutorials</a>
+		<a href="TutorialsPage/tutorials.html" class="btn secondary">Continue in Tutorials</a>
 	`;
 }
