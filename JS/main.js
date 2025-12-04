@@ -6,24 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    const loginForm = document.getElementById("loginForm");
-    if (loginForm) {
-        loginForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const user = document.getElementById("loginUser").value.trim();
-            const pass = document.getElementById("loginPass").value.trim();
-            const error = document.getElementById("loginError");
-            const content = document.getElementById("portalContent");
-
-            if (user === "admin" && pass === "password") {
-                error.textContent = "";
-                content.classList.remove("hidden");
-            } else {
-                error.textContent = "Invalid login. Try admin / password.";
-            }
-        });
-    }
-
     const regForm = document.getElementById("registrationForm");
 	if (regForm) {
 		regForm.addEventListener("submit", (event) => {
@@ -33,23 +15,31 @@ document.addEventListener("DOMContentLoaded", () => {
 			const emailInput = document.getElementById("email");
 			const levelSelect = document.getElementById("level");
 			const interestSelect = document.getElementById("interest");
+			const passwordInput = document.getElementById("password");
+			const confirmPasswordInput = document.getElementById("confirmPassword");
 
 			const nameError = document.getElementById("nameError");
 			const emailError = document.getElementById("emailError");
 			const levelError = document.getElementById("levelError");
 			const interestError = document.getElementById("interestError");
+			const passwordError = document.getElementById("passwordError");
+			const confirmPasswordError = document.getElementById("confirmPasswordError");
 
 			// clear old errors
 			nameError.textContent = "";
 			emailError.textContent = "";
 			levelError.textContent = "";
 			interestError.textContent = "";
+			passwordError.textContent = "";
+			confirmPasswordError.textContent = "";
 
 			let isValid = true;
 			const name = nameInput.value.trim();
 			const email = emailInput.value.trim();
 			const level = levelSelect.value;
 			const interest = interestSelect.value;
+			const password = passwordInput.value.trim();
+			const confirmPassword = confirmPasswordInput.value.trim();
 
 			if (!name) {
 				nameError.textContent = "Please enter your name.";
@@ -72,6 +62,23 @@ document.addEventListener("DOMContentLoaded", () => {
 				isValid = false;
 			}
 
+			// password validation
+			if (!password) {
+				passwordError.textContent = "Please create a password.";
+				isValid = false;
+			} else if (password.length < 8) {
+				passwordError.textContent = "Password must be at least 8 characters.";
+				isValid = false;
+			}
+
+			if (!confirmPassword) {
+				confirmPasswordError.textContent = "Please confirm your password.";
+				isValid = false;
+			} else if (password && confirmPassword !== password) {
+				confirmPasswordError.textContent = "Passwords do not match.";
+				isValid = false;
+			}
+
 			if (!isValid) {
 				return;
 			}
@@ -80,7 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				name,
 				email,
 				level,
-				interest
+				interest,
+				password // in real app, never store plain passwords
 			};
 
 			// save to localStorage
@@ -88,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			// go to confirmation page
 			window.location.href = "../ConfirmationPage/confirmation.html";
-	    });
+		});
 	}
 
     const confirmationMessage = document.getElementById("confirmationMessage");
@@ -114,12 +122,35 @@ function initPortalPage() {
 	const loginError = document.getElementById("loginError");
 	const eventForm = document.getElementById("eventForm");
 	const eventsList = document.getElementById("eventsList");
+	const logoutBtn = document.getElementById("logoutBtn");
+	const welcome = document.getElementById("welcomeMessage");
 
 	if (!loginForm || !portalContent || !eventForm || !eventsList) {
 		return; // not on portal page
 	}
 
-	// simple demo login
+	// Event form references
+	const titleInput = document.getElementById("eventTitle");
+	const dateInput = document.getElementById("eventDate");
+	const timeInput = document.getElementById("eventTime");
+	const topicSelect = document.getElementById("eventTopic");
+	const eventError = document.getElementById("eventError");
+	const submitBtn = eventForm.querySelector("button[type='submit']");
+
+	// Track which event index is being edited
+	let editingIndex = null;
+
+	// ---- Restore login state if already logged in ----
+	const savedUser = localStorage.getItem("staffUsername");
+	if (localStorage.getItem("staffLoggedIn") === "true") {
+		portalContent.classList.remove("hidden");
+		loginForm.classList.add("hidden");
+
+		if (logoutBtn) logoutBtn.style.display = "inline-block";
+		if (welcome && savedUser) welcome.textContent = `Hello ${savedUser}!`;
+	}
+
+	// ---- Login ----
 	loginForm.addEventListener("submit", (e) => {
 		e.preventDefault();
 		const user = document.getElementById("loginUser").value.trim();
@@ -127,16 +158,48 @@ function initPortalPage() {
 
 		if (user === "admin" && pass === "password") {
 			loginError.textContent = "";
+
+			localStorage.setItem("staffLoggedIn", "true");
+			localStorage.setItem("staffUsername", user);
+
 			portalContent.classList.remove("hidden");
+			loginForm.classList.add("hidden");
+
+			if (logoutBtn) logoutBtn.style.display = "inline-block";
+			if (welcome) welcome.textContent = `Hello ${user}!`;
+
 		} else {
 			loginError.textContent = "Invalid credentials. Try admin / password.";
 		}
 	});
 
-	function renderEvents() {
-		const events = loadEvents().slice().sort((a, b) => {
-			return a.datetime.localeCompare(b.datetime);
+	// ---- Logout ----
+	if (logoutBtn) {
+		logoutBtn.addEventListener("click", () => {
+			localStorage.removeItem("staffLoggedIn");
+			localStorage.removeItem("staffUsername");
+
+			portalContent.classList.add("hidden");
+			loginForm.classList.remove("hidden");
+
+			logoutBtn.style.display = "none";
+			document.getElementById("loginUser").value = "";
+			document.getElementById("loginPass").value = "";
+			loginError.textContent = "";
+
+			if (welcome) {
+				welcome.innerHTML = `Use <strong>admin / password</strong> to log in.`;
+			}
+
+			// reset event editor
+			editingIndex = null;
+			submitBtn.textContent = "Create Event";
 		});
+	}
+
+	// ---- Render Events (with Edit + Delete buttons) ----
+	function renderEvents() {
+		const events = loadEvents().slice().sort((a, b) => a.datetime.localeCompare(b.datetime));
 
 		eventsList.innerHTML = "";
 		if (events.length === 0) {
@@ -144,25 +207,70 @@ function initPortalPage() {
 			return;
 		}
 
-		events.forEach((event) => {
+		events.forEach((event, index) => {
 			const li = document.createElement("li");
 			li.innerHTML = `
 				<strong>${event.title}</strong><br>
 				${event.date} @ ${event.time} • Topic: ${event.topic.toUpperCase()}
+				<br>
+				<button type="button" class="btn secondary edit-event" data-index="${index}">Edit</button>
+				<button type="button" class="btn delete-event" data-index="${index}">Delete</button>
 			`;
 			eventsList.appendChild(li);
 		});
 	}
 
+	// ---- Edit Button Handler ----
+	eventsList.addEventListener("click", (e) => {
+		const editButton = e.target.closest(".edit-event");
+		if (!editButton) return;
+
+		const index = parseInt(editButton.dataset.index, 10);
+		const events = loadEvents();
+		const ev = events[index];
+		if (!ev) return;
+
+		// Fill form
+		titleInput.value = ev.title;
+		dateInput.value = ev.date;
+		timeInput.value = ev.time;
+		topicSelect.value = ev.topic;
+
+		editingIndex = index;
+		eventError.textContent = "";
+		submitBtn.textContent = "Update Event";
+
+		titleInput.focus();
+	});
+
+	// ---- Delete Button Handler ----
+	eventsList.addEventListener("click", (e) => {
+		const deleteButton = e.target.closest(".delete-event");
+		if (!deleteButton) return;
+
+		const index = parseInt(deleteButton.dataset.index, 10);
+		const events = loadEvents();
+		if (!events[index]) return;
+
+		if (!confirm(`Delete event "${events[index].title}"?`)) return;
+
+		events.splice(index, 1);
+		saveEvents(events);
+
+		// if editing deleted event → reset
+		if (editingIndex === index) {
+			editingIndex = null;
+			submitBtn.textContent = "Create Event";
+			titleInput.value = "";
+			timeInput.value = "";
+		}
+
+		renderEvents();
+	});
+
+	// ---- Create OR Update Event ----
 	eventForm.addEventListener("submit", (e) => {
 		e.preventDefault();
-
-		const titleInput = document.getElementById("eventTitle");
-		const dateInput = document.getElementById("eventDate");
-		const timeInput = document.getElementById("eventTime");
-		const topicSelect = document.getElementById("eventTopic");
-		const eventError = document.getElementById("eventError");
-
 		eventError.textContent = "";
 
 		const title = titleInput.value.trim();
@@ -176,22 +284,32 @@ function initPortalPage() {
 		}
 
 		const events = loadEvents();
-		events.push({
+		const updatedEvent = {
 			title,
 			date,
 			time,
 			topic,
-			datetime: `${date}T${time}`
-		});
+			datetime: `${date}T${time}`,
+		};
+
+		if (editingIndex !== null) {
+			events[editingIndex] = updatedEvent;
+		} else {
+			events.push(updatedEvent);
+		}
+
 		saveEvents(events);
 
+		// Reset form
+		editingIndex = null;
+		submitBtn.textContent = "Create Event";
 		titleInput.value = "";
 		timeInput.value = "";
 
 		renderEvents();
 	});
 
-	// initial render
+	// Initial render
 	renderEvents();
 }
 
@@ -232,10 +350,10 @@ function initTutorialsPage() {
 			card.className = "lesson-card";
 			card.dataset.id = lesson.id;
 			card.innerHTML = `
-				<h3>${lesson.title}</h3>
-				<p>Topic: ${lesson.topic.toUpperCase()} • Level: ${lesson.level} • ${lesson.time}</p>
-				<p class="lesson-tags">${lesson.tags.join(", ")}</p>
-			`;
+                <h3>${lesson.title}</h3>
+                <p>Topic: ${lesson.topic.toUpperCase()} • Level: ${lesson.level} • ${lesson.time}</p>
+                <p class="lesson-tags">${lesson.tags.join(", ")}</p>
+            `;
 			lessonList.appendChild(card);
 		});
 	}
@@ -247,19 +365,156 @@ function initTutorialsPage() {
 		}
 
 		lessonDetail.innerHTML = `
-			<h2>${lesson.title}</h2>
-			<p><strong>Topic:</strong> ${lesson.topic.toUpperCase()} • <strong>Level:</strong> ${lesson.level} • <strong>Time:</strong> ${lesson.time}</p>
-			<h3>Read</h3>
-			<div class="lesson-read">
-				${lesson.readHtml}
-			</div>
-			<h3>Try It</h3>
-			<pre><code>${lesson.tryItCode}</code></pre>
-			<h3>Quick Quiz</h3>
-			<div class="lesson-quiz">
-				${lesson.quizHtml}
-			</div>
-		`;
+            <h2>${lesson.title}</h2>
+            <p>
+                <strong>Topic:</strong> ${lesson.topic.toUpperCase()} •
+                <strong>Level:</strong> ${lesson.level} •
+                <strong>Time:</strong> ${lesson.time}
+            </p>
+            <h3>Read</h3>
+            <div class="lesson-read">
+                ${lesson.readHtml}
+            </div>
+            <h3>Try It</h3>
+            <pre><code>${lesson.tryItCode}</code></pre>
+            <h3>Quick Quiz</h3>
+            <div class="lesson-quiz" id="lessonQuiz"></div>
+        `;
+
+		renderQuizForLesson(lesson);
+	}
+
+	// simple quiz bank based on topic (same quiz reused for all lessons of that topic)
+	function getQuizForLesson(lesson) {
+		if (lesson.topic === "java") {
+			return [
+				{
+					question: "What does an if statement let your program do?",
+					choices: [
+						"Repeat code a fixed number of times",
+						"Decide whether to run some code based on a condition",
+						"Store many values in one variable"
+					],
+					correctIndex: 1,
+					explanation: "If statements run their block only when the condition is true."
+				},
+				{
+					question: "Which of these is a valid Java variable name?",
+					choices: [
+						"2number",
+						"user-name",
+						"userName"
+					],
+					correctIndex: 2,
+					explanation: "Variable names can't start with a number and can't contain hyphens."
+				}
+			];
+		}
+
+		// default to web quiz (HTML/CSS/JS)
+		return [
+			{
+				question: "What does <p> represent in HTML?",
+				choices: [
+					"A paragraph of text",
+					"A page break",
+					"A picture container"
+				],
+				correctIndex: 0,
+				explanation: "<p> is the paragraph element in HTML."
+			},
+			{
+				question: "Where should most CSS for a site usually live?",
+				choices: [
+					"Inline on every HTML element",
+					"In a separate .css file linked in the <head>",
+					"In the browser console only"
+				],
+				correctIndex: 1,
+				explanation: "Best practice is to keep styles in an external stylesheet."
+			}
+		];
+	}
+
+	function renderQuizForLesson(lesson) {
+		const quizContainer = document.getElementById("lessonQuiz");
+		if (!quizContainer) return;
+
+		const quiz = getQuizForLesson(lesson);
+		if (!quiz || quiz.length === 0) {
+			quizContainer.innerHTML = "<p>No quiz for this lesson yet.</p>";
+			return;
+		}
+
+		quizContainer.innerHTML = "";
+
+		quiz.forEach((q, qi) => {
+			const wrapper = document.createElement("div");
+			wrapper.className = "quiz-question";
+
+			const question = document.createElement("p");
+			question.textContent = `${qi + 1}. ${q.question}`;
+			wrapper.appendChild(question);
+
+			q.choices.forEach((choiceText, ci) => {
+				const label = document.createElement("label");
+				label.className = "quiz-choice";
+
+				const input = document.createElement("input");
+				input.type = "radio";
+				input.name = `q-${lesson.id}-${qi}`;
+				input.value = ci;
+
+				label.appendChild(input);
+				label.append(` ${choiceText}`);
+				wrapper.appendChild(label);
+			});
+
+			const feedback = document.createElement("div");
+			feedback.className = "quiz-feedback";
+			wrapper.appendChild(feedback);
+
+			quizContainer.appendChild(wrapper);
+		});
+
+		const checkBtn = document.createElement("button");
+		checkBtn.textContent = "Check Answers";
+		checkBtn.className = "btn primary";
+
+		const result = document.createElement("p");
+		result.className = "quiz-result";
+
+		checkBtn.addEventListener("click", () => {
+			let score = 0;
+
+			quiz.forEach((q, qi) => {
+				const name = `q-${lesson.id}-${qi}`;
+				const selected = document.querySelector(`input[name="${name}"]:checked`);
+				const feedback = quizContainer.querySelectorAll(".quiz-feedback")[qi];
+
+				if (!selected) {
+					feedback.textContent = "Choose an answer.";
+					feedback.style.color = "#d90429";
+					return;
+				}
+
+				const chosenIndex = parseInt(selected.value, 10);
+
+				if (chosenIndex === q.correctIndex) {
+					score++;
+					feedback.textContent = "Correct! " + (q.explanation || "");
+					feedback.style.color = "#2b9348";
+				} else {
+					feedback.textContent = "Not quite. " + (q.explanation || "");
+					feedback.style.color = "#d90429";
+				}
+			});
+
+			result.textContent = `You got ${score} / ${quiz.length} correct.`;
+		});
+
+		quizContainer.appendChild(checkBtn);
+		quizContainer.appendChild(result);
 	}
 
 	// click handling
@@ -293,8 +548,7 @@ function initTutorialsPage() {
 	const lastId = loadLastLessonId();
 	const initialLesson = lessons.find((l) => l.id === lastId) || lessons[0];
 	setLessonDetail(initialLesson);
-
-};
+}
 
 // ---- Home page logic ----
 
