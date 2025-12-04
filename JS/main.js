@@ -384,56 +384,145 @@ function initTutorialsPage() {
 		renderQuizForLesson(lesson);
 	}
 
-	// simple quiz bank based on topic (same quiz reused for all lessons of that topic)
+	// simple quiz bank based on topic
 	function getQuizForLesson(lesson) {
-		if (lesson.topic === "java") {
+		const title = (lesson.title || "").toLowerCase();
+
+		// Java: Variables & Data Types
+		if (title === "java: variables & data types") {
 			return [
 				{
-					question: "What does an if statement let your program do?",
-					choices: [
-						"Repeat code a fixed number of times",
-						"Decide whether to run some code based on a condition",
-						"Store many values in one variable"
-					],
-					correctIndex: 1,
-					explanation: "If statements run their block only when the condition is true."
+					question: "Which Java type is best for whole-number values like 3 or -10?",
+					choices: ["double", "String", "int"],
+					correctIndex: 2,
+					explanation: "Use int for whole numbers in Java."
 				},
 				{
-					question: "Which of these is a valid Java variable name?",
+					question: "What does a variable do in a program?",
 					choices: [
-						"2number",
-						"user-name",
-						"userName"
+						"It repeats code",
+						"It stores a value you can use later",
+						"It prints text to the screen"
 					],
-					correctIndex: 2,
-					explanation: "Variable names can't start with a number and can't contain hyphens."
+					correctIndex: 1,
+					explanation: "Variables are named storage locations for data."
 				}
 			];
 		}
 
-		// default to web quiz (HTML/CSS/JS)
-		return [
-			{
-				question: "What does <p> represent in HTML?",
-				choices: [
-					"A paragraph of text",
-					"A page break",
-					"A picture container"
-				],
-				correctIndex: 0,
-				explanation: "<p> is the paragraph element in HTML."
-			},
-			{
-				question: "Where should most CSS for a site usually live?",
-				choices: [
-					"Inline on every HTML element",
-					"In a separate .css file linked in the <head>",
-					"In the browser console only"
-				],
-				correctIndex: 1,
-				explanation: "Best practice is to keep styles in an external stylesheet."
-			}
-		];
+		// Java: If Statements
+		if (title === "java: if statements") {
+			return [
+				{
+					question: "What happens if an if-statement's condition is false?",
+					choices: [
+						"The code inside the if block is skipped",
+						"The program crashes",
+						"The code inside the if block still runs"
+					],
+					correctIndex: 0,
+					explanation: "If the condition is false, the if block simply doesn't run."
+				},
+				{
+					question: "Which operator checks equality in a Java if condition?",
+					choices: ["=", "==", "===",],
+					correctIndex: 1,
+					explanation: "`=` assigns, `==` compares values in Java."
+				}
+			];
+		}
+
+		// Java: For Loops
+		if (title === "java: for loops") {
+			return [
+				{
+					question: "What is a for loop most commonly used for?",
+					choices: [
+						"Making a decision once",
+						"Repeating code a specific number of times",
+						"Storing data permanently"
+					],
+					correctIndex: 1,
+					explanation: "For loops are ideal when you know how many times you want to repeat code."
+				},
+				{
+					question: "Which part of a for loop usually changes each time it runs?",
+					choices: [
+						"The loop variable in the update section",
+						"The condition never changes",
+						"The type of the loop itself"
+					],
+					correctIndex: 0,
+					explanation: "The update section (like i++) changes the loop variable each iteration."
+				}
+			];
+		}
+
+		// HTML: Your First Webpage
+		if (title === "html: your first webpage") {
+			return [
+				{
+					question: "Which tag wraps the main content that shows in the browser window?",
+					choices: ["<head>", "<body>", "<html>"],
+					correctIndex: 1,
+					explanation: "The <body> holds what actually appears on the page."
+				},
+				{
+					question: "Which of these is the correct way to start an HTML document?",
+					choices: [
+						"<html><body>",
+						"<!DOCTYPE html> then <html>",
+						"<head><title>"
+					],
+					correctIndex: 1,
+					explanation: "Modern HTML should start with <!DOCTYPE html> followed by <html>."
+				}
+			];
+		}
+
+		// CSS: Coloring & Styling Text
+		if (title === "css: coloring & styling text") {
+			return [
+				{
+					question: "Which CSS property changes the color of text?",
+					choices: ["background-color", "font-size", "color"],
+					correctIndex: 2,
+					explanation: "Use the color property to set text color."
+				},
+				{
+					question: "Which CSS snippet makes all <h1> text bold and blue?",
+					choices: [
+						"h1 { color: blue; font-weight: bold; }",
+						"h1 { text-color: blue; make-bold: true; }",
+						"h1 { style: blue bold; }"
+					],
+					correctIndex: 0,
+					explanation: "color and font-weight are the correct properties."
+				}
+			];
+		}
+
+		// JavaScript: Buttons That Do Something
+		if (title === "javascript: buttons that do something") {
+			return [
+				{
+					question: "What does addEventListener do for a button?",
+					choices: [
+						"It changes the button's color",
+						"It attaches a function to run when something (like a click) happens",
+						"It reloads the page automatically"
+					],
+					correctIndex: 1,
+					explanation: "addEventListener lets you react to events such as clicks."
+				},
+				{
+					question: "Which event type would you use to run code when a button is clicked?",
+					choices: ["'hover'", "'click'", "'load'"],
+					correctIndex: 1,
+					explanation: "The 'click' event fires when the user clicks the button."
+				}
+			];
+		}
 	}
 
 	function renderQuizForLesson(lesson) {
